@@ -78,16 +78,22 @@ EVAFrontUpperBeltX = 17;
 EVAFrontLowerBeltX = -26;
 
 // Belt Offsets as calculated from the X block
-EVABackBeltY = -15.5;
+EVABackBeltY = -16.5;
 
-EVABackUpperBeltZ = -18;
 EVABackLowerBeltZ = -30;
+EVABackUpperBeltZ = -18;
 
-EVABackUpperBeltX = 47;
-EVABackLowerBeltX = -47;
+EVABackLowerBeltX = 20;
+EVABackUpperBeltX = -27;
 
 Extrusion2020Height = 20;
 Extrusion2020Width = 20;
+
+/*
+EVABackLowerBelt() color("red") cube([20,1.6,6],center=true);
+EVABackUpperBelt() color("blue") cube([20,1.6,6],center=true);
+
+EVAHemeraCarriage();*/
 
 ///////////////////////////////////////// BED Details /////////////////////////////////////////
 
@@ -110,15 +116,15 @@ XLocation = InteriorWidth/2 + Y;
 
 // Calculated upper and lower belt heights
 LowerBeltHeight = XYCarriageHeight + Extrusion2020Height/2 +
-                MGN12Height + XCarriageMountHeight + Extrusion2020Height + MGN12Height + EVABackLowerBeltZ;
+                MGN12Height + XCarriageMountHeight + Extrusion2020Height + MGN12Height + EVAFrontLowerBeltZ;
 
 UpperBeltHeight = XYCarriageHeight + Extrusion2020Height/2 + 
-                MGN12Height + XCarriageMountHeight + Extrusion2020Height + MGN12Height + EVABackUpperBeltZ;
+                MGN12Height + XCarriageMountHeight + Extrusion2020Height + MGN12Height + EVAFrontUpperBeltZ;
 
 
 
 module frame(){
-     union() color("lightgrey")  {
+     union() color("lightgrey") {
         for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
             for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
                   translate([x,y,Height/2]) cube([20,20,Height],center=true); 
@@ -136,16 +142,9 @@ module frame(){
         translate([-InteriorWidth/2,0,XYCarriageHeight]) cube([20,ExteriorDepth-20,20],center=true);
         translate([InteriorWidth/2,0,XYCarriageHeight]) cube([20,ExteriorDepth-20,20],center=true);
         
-        // Y rail
-        translate([-InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_rail();
-        translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_rail();
+      
 
-        // X rail
-        translate([0,0,XYCarriageHeight+10]) mgn12_y_block() translate([0,0,10+XCarriageMountHeight]) {
-           cube([X2020Length,20,20],center=true);
-           translate([0,0,10]) mgn12_x_rail(length=400,block=400/2);
-           translate([0,0,10]) mgn12_x_block() color("green") EVAHemeraCarriage();
-        }
+       
         
            // Top Frame
         translate([0,-ExteriorDepth/2,Height-10]) cube([ExteriorWidth-20,20,20],center=true);
@@ -160,6 +159,17 @@ module frame(){
         
         translate([-ExteriorWidth/2,0,10]) cube([20,ExteriorDepth-20,20],center=true);
         translate([ExteriorWidth/2,0,10]) cube([20,ExteriorDepth-20,20],center=true);
+    }
+    
+    // Y rail
+    translate([-InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_rail();
+    translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_rail();
+    
+    // X rail
+    translate([0,0,XYCarriageHeight+10]) mgn12_y_block() translate([0,0,10+XCarriageMountHeight]) {
+           color("lightgrey") cube([X2020Length,20,20],center=true);
+           translate([0,0,10]) mgn12_x_rail(length=400,block=400/2);
+           translate([0,0,10]) mgn12_x_block() EVAHemeraCarriage();
     }
 
    
@@ -226,7 +236,7 @@ module rear_left_pulley_mount(){
 
     }
 }
-rear_left_pulley_mount();
+//rear_left_pulley_mount();
 
 module rear_right_pulley_mount(){
     difference(){
@@ -267,7 +277,7 @@ module rear_right_pulley_mount(){
     }
 }
 
-rear_right_pulley_mount();
+//rear_right_pulley_mount();
 
 
 // The top center of the block the extruder should be mounted to
@@ -298,7 +308,7 @@ module blue_xaxis_pulley_from_motor(){
 module blue_rear_left_pulley(){
     translate([blue_motor_x(),
               -ExteriorDepth/2+RearPulleyOffset*2.5,
-                LowerBeltHeight
+                UpperBeltHeight
             ]) children();
 }
 
@@ -306,8 +316,8 @@ module blue_rear_right_pulley(){
     translate([
         // B1: This X value MUST be the same as the X value B2
         -blue_motor_x()+MotorPulleyDWB/2+XPulleySmoothDWB/2-BeltThickness,
-        -ExteriorDepth/2+RearPulleyOffset*4,
-        LowerBeltHeight]) children();
+        -ExteriorDepth/2+RearPulleyOffset*4.5,
+        UpperBeltHeight]) children();
 }
 
 module blue_xaxis_pulley_from_rear(){
@@ -315,7 +325,7 @@ module blue_xaxis_pulley_from_rear(){
         // B2: This X value MUST be the same as the X value for B1
         -blue_motor_x()+MotorPulleyDWB/2+XPulleySmoothDWB/2-BeltThickness,
         InteriorDepth/2-YLocation-XPulleySmoothDWB/2+EVABackBeltY+BeltThickness/2,
-        LowerBeltHeight])  children(); 
+        UpperBeltHeight])  children(); 
 }
 
 module blue_belt_path(BeltThickness=BeltThickness,BelthHeight=BeltHeight){
@@ -377,7 +387,7 @@ module blue_belt_path(BeltThickness=BeltThickness,BelthHeight=BeltHeight){
                 translate([0,XPulleySmoothDWB/2-BeltThickness/2]) 
                 cylinder(r=BeltThickness/2,h=BeltHeight,center=true);
             
-                xy_block() EVABackLowerBelt() translate([0,0,0]) cylinder(r=BeltThickness/2,h=BeltHeight,center=true);
+                xy_block() EVABackUpperBelt() translate([0,0,0]) cylinder(r=BeltThickness/2,h=BeltHeight,center=true);
         }
     }
 }
@@ -391,26 +401,36 @@ function red_motor_x() = -ExteriorWidth/2+11;
 
 
 module red_motor_pulley(){
-    translate([red_motor_x(),ExteriorDepth/2-MotorY/2-12,LowerBeltHeight]) children();
+    translate([ 
+        red_motor_x(),
+        ExteriorDepth/2-MotorY/2-12,
+        LowerBeltHeight]
+    ) children();
 }
 
 module red_xaxis_pulley_from_motor(){
     translate([
         red_motor_x()+MotorPulleyDWB/2+XPulleySmoothDWB/2-BeltThickness,
         InteriorDepth/2-YLocation+XPulleySmoothDWB/2+EVAFrontBeltY-BeltThickness/2,
-        LowerBeltHeight])  children();
+        LowerBeltHeight]
+    )  children();
 }
 
 module red_rear_left_pulley(){
     translate([
         // R1: This value MUST be the same as R2
         -red_motor_x()-MotorPulleyDWB/2-XPulleySmoothDWB/2+BeltThickness,
-        -ExteriorDepth/2+RearPulleyOffset*4,
-        UpperBeltHeight]) children();
+        -ExteriorDepth/2+RearPulleyOffset*4.5,
+        LowerBeltHeight]
+    ) children();
 }
 
 module red_rear_right_pulley(){
-    translate([red_motor_x(),-ExteriorDepth/2+RearPulleyOffset*2.5,UpperBeltHeight]) children();
+    translate([
+        red_motor_x(),
+        -ExteriorDepth/2+RearPulleyOffset*2.5,
+    LowerBeltHeight]
+    ) children();
 }
 
 module red_xaxis_pulley_from_rear(){
@@ -418,8 +438,8 @@ module red_xaxis_pulley_from_rear(){
         // R2: This value MUST be the same as R1
         -red_motor_x()-MotorPulleyDWB/2-XPulleySmoothDWB/2+BeltThickness,
         InteriorDepth/2-YLocation-XPulleySmoothDWB/2+EVABackBeltY+BeltThickness/2,
-        UpperBeltHeight])  
-        children(); 
+        LowerBeltHeight]
+    ) children(); 
 }
 
 module red_belt_path(BelthThickness=BeltThickness,BeltThickness=BeltThickness){
@@ -481,12 +501,12 @@ module red_belt_path(BelthThickness=BeltThickness,BeltThickness=BeltThickness){
                 translate([0,XPulleySmoothDWB/2-BeltThickness/2]) 
                 cylinder(r=BeltThickness/2,h=BeltHeight,center=true);
             
-                xy_block() EVABackUpperBelt() translate([0,0,0]) cylinder(r=BeltThickness/2,h=BeltHeight,center=true);
+                xy_block() EVABackLowerBelt() translate([0,0,0]) cylinder(r=BeltThickness/2,h=BeltHeight,center=true);
         }
     }
 }
 
- frame();
+     frame();
 
 
 
@@ -508,16 +528,17 @@ module EVABackLowerBelt(){
     translate([EVABackLowerBeltX,EVABackBeltY,EVABackLowerBeltZ]) children();
 }
 
+
 module EVAHemeraCarriage(){
     rotate([0,0,180]){
         translate([0,0,-15.5]) {
             // The top mount must have it's bottom at Z=0 and centered in the X
-            translate([0,0,15.5]) import("eva_hemera/top_mgn12.stl");
-            translate([0,18.4,0]) import("eva_hemera/back_corexy.stl");
-            translate([0,-13.4,0])import("eva_hemera/hemera_face.stl");
-            translate([0,-13.5,-24.5]) import("eva_hemera/bottom_mgn12_hemera.stl");
-            translate([-39,28.3,-0.5]) rotate([-90,0,180])  import("eva_hemera/tension_slider_9mm_belt_M5.stl");
-            translate([39,28.6,-16.5]) rotate([90,0,0])  import("eva_hemera/tension_slider_9mm_belt_M5.stl");
+            color("black") translate([0,0,15.5]) import("eva_hemera/top_mgn12.stl");
+            color("lawngreen") translate([0,18.4,0]) import("eva_hemera/back_corexy.stl");
+            color("lawngreen") translate([0,-13.4,0])import("eva_hemera/hemera_face.stl");
+            color("black") translate([0,-13.5,-24.5]) import("eva_hemera/bottom_mgn12_hemera.stl");
+            color("black") translate([-12,28.3,-15]) rotate([-90,0,180])  import("eva_hemera/tension_slider_9mm_belt_M5.stl");
+            color("black") translate([12,28.6,-2.5]) rotate([90,0,0])  import("eva_hemera/tension_slider_9mm_belt_M5.stl");
         }
     }
 }
@@ -539,8 +560,8 @@ module nema17_cutout(){
 
 
 module mgn12_x_rail(length=400,block=400/2){
-    translate([0,0,4]) cube([length,12,8],center=true);
-    translate([InteriorWidth/2-XLocation,0,13/2+3]) cube([45.4,27,10],center=true);
+    color("darkgrey") translate([0,0,4]) cube([length,12,8],center=true);
+    color("#666666") translate([InteriorWidth/2-XLocation,0,13/2+3]) cube([45.4,27,10],center=true);
 }
 
 module mgn12_x_block(length=400,block=400/2){
@@ -549,8 +570,8 @@ module mgn12_x_block(length=400,block=400/2){
 
 
 module mgn12_y_rail(length=400,block=400/2){
-    translate([0,0,4]) cube([12,length,8],center=true);
-    translate([0,InteriorDepth/2-YLocation,13/2+3]) cube([27,45.4,10],center=true);
+    color("darkgrey") translate([0,0,4]) cube([12,length,8],center=true);
+    color("#666666") translate([0,InteriorDepth/2-YLocation,13/2+3]) cube([27,45.4,10],center=true);
 }
 
 module mgn12_y_block(length=400,block=400/2) {
