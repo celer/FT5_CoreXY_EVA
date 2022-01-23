@@ -24,3 +24,10 @@ This is a work in progress and no STLs for printing have been created yet.
  * [Parallel A-H belt paths](https://drmrehorst.blogspot.com/2018/08/corexy-mechanism-layout-and-belt.html)
 
 ![Top](https://raw.githubusercontent.com/celer/FT5_CoreXY_EVA/main/images/top.png)
+
+# Side views
+
+![Front](https://raw.githubusercontent.com/celer/FT5_CoreXY_EVA/main/images/front.png)
+![Side](https://raw.githubusercontent.com/celer/FT5_CoreXY_EVA/main/images/side.png)
+![Back](https://raw.githubusercontent.com/celer/FT5_CoreXY_EVA/main/images/back.png)
+
