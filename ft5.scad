@@ -115,7 +115,7 @@ UpperBeltHeight=XYCarriageHeight+Extrusion2020Height/2+MGN12Height+XCarriageMoun
 
 
 module frame(){
-     union() color("lightgrey")  {
+     %union() /*color("lightgrey")*/  {
         for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
             for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
                   translate([x,y,Height/2]) cube([20,20,Height],center=true); 
@@ -161,7 +161,7 @@ module frame(){
 
    
     // Place all the lower pulleys
-    color("blue"){
+    color("cyan"){
         blue_motor_pulley() cylinder(r=MotorPulleyDWB/2,h=MotorPulleyH,center=true);  
         blue_xaxis_pulley_from_motor() cylinder(r=XPulleySmoothDWB/2,h=XPulleySmoothH,center=true);
         blue_rear_left_pulley() cylinder(r=CornerPDWN/2,h=CornerPH,center=true);
@@ -170,7 +170,7 @@ module frame(){
     }
     
     // Place all the lower pulleys
-    color("red"){
+    color("pink"){
         red_motor_pulley() cylinder(r=MotorPulleyDWB/2,h=MotorPulleyH,center=true);  
         red_xaxis_pulley_from_motor() cylinder(r=XPulleySmoothDWB/2,h=XPulleySmoothH,center=true);
         red_rear_left_pulley() cylinder(r=CornerPDWN/2,h=CornerPH,center=true);
@@ -181,11 +181,11 @@ module frame(){
     red_belt_path();
     blue_belt_path();
    
-    red_motor_pulley()translate([0,0,10])  nema17();
-    blue_motor_pulley() translate([0,0,10])  nema17();
+    red_motor_pulley()translate([0,0,10]) color("darkgrey") nema17();
+    blue_motor_pulley() translate([0,0,10]) color("darkgrey") nema17();
 
     //60 / 135
-    translate([0,BedCenterY,XYCarriageHeight-20]) cube([BedX,BedY,2],center=true);
+    translate([0,BedCenterY,XYCarriageHeight-20]) color("lightgrey") cube([BedX,BedY,2],center=true);
     
  
 }
@@ -216,15 +216,20 @@ module blue_xaxis_pulley_from_motor(){
 }
 
 module blue_rear_left_pulley(){
-    translate([blue_motor_x(),-ExteriorDepth/2+RearPulleyOffset*2,LowerBeltHeight]) children();
+    translate([blue_motor_x(),-ExteriorDepth/2+RearPulleyOffset,LowerBeltHeight]) children();
 }
 
 module blue_rear_right_pulley(){
-    translate([-blue_motor_x()+RearPulleyOffset,-ExteriorDepth/2+RearPulleyOffset*3,LowerBeltHeight]) children();
+    translate([
+        // B1: This X value MUST be the same as the X value B2
+        -blue_motor_x()+MotorPulleyDWB/2+XPulleySmoothDWB/2-BeltThickness,
+        -ExteriorDepth/2+RearPulleyOffset*3,
+        LowerBeltHeight]) children();
 }
 
 module blue_xaxis_pulley_from_rear(){
     translate([
+        // B2: This X value MUST be the same as the X value for B1
         -blue_motor_x()+MotorPulleyDWB/2+XPulleySmoothDWB/2-BeltThickness,
         InteriorDepth/2-YLocation-XPulleySmoothDWB/2+EVABackBeltY+BeltThickness/2,
         LowerBeltHeight])  children(); 
@@ -232,7 +237,7 @@ module blue_xaxis_pulley_from_rear(){
 
 module blue_belt_path(){
  // Create the blue belt path 
-    color("cyan"){
+    color("blue"){
         hull(){
             blue_motor_pulley() 
                 translate([-MotorPulleyDWB/2+BeltThickness/2,0,0]) 
@@ -311,7 +316,10 @@ module red_xaxis_pulley_from_motor(){
 }
 
 module red_rear_left_pulley(){
-    translate([-red_motor_x()-RearPulleyOffset,-ExteriorDepth/2+RearPulleyOffset*3,UpperBeltHeight]) children();
+    translate([
+        // R1: This value MUST be the same as R2
+        -red_motor_x()-MotorPulleyDWB/2-XPulleySmoothDWB/2+BeltThickness,
+        -ExteriorDepth/2+RearPulleyOffset*3,UpperBeltHeight]) children();
 }
 
 module red_rear_right_pulley(){
@@ -320,6 +328,7 @@ module red_rear_right_pulley(){
 
 module red_xaxis_pulley_from_rear(){
     translate([
+        // R2: This value MUST be the same as R1
         -red_motor_x()-MotorPulleyDWB/2-XPulleySmoothDWB/2+BeltThickness,
         InteriorDepth/2-YLocation-XPulleySmoothDWB/2+EVABackBeltY+BeltThickness/2,
         UpperBeltHeight])  
@@ -328,7 +337,7 @@ module red_xaxis_pulley_from_rear(){
 
 module red_belt_path(){
     // Create the red belt path 
-    color("pink"){
+    color("red"){
         hull(){
             red_motor_pulley() 
                 translate([MotorPulleyDWB/2-BeltThickness/2,0,0]) 
@@ -390,7 +399,7 @@ module red_belt_path(){
     }
 }
 
-frame();
+rotate([0,0,180]) frame();
 
 
 
