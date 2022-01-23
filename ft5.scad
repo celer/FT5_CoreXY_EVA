@@ -60,20 +60,22 @@ MotorY = 42.3;
 // Total height of an MGN12 rail and block 
 MGN12Height = 13;
 
+//How much to offset each pulley so that doesn't interfer with the others
+RearPulleyOffset = 10;
+
 ///////////////////////////////////////////// EVA Platform ////////////////////////////////
 /// The EVA Carriage platform is meant to allow easy swapping of carriages so this is used
 // by the ratrig guys to make it easy to support multiple extruders. 
 // see https://main.eva-3d.page/
 
-// Belt Offsets as calculated from the X block
+// Belt Offsets as calculated from the center of X MGN12 block
 EVAFrontBeltY = 15.5;
 
+// Center of the belt offset as calculated from the center top of the MGN12 block
 EVAFrontUpperBeltZ = -18;
 EVAFrontLowerBeltZ = -30;
 
-//How much to offset each pulley so that doesn't interfer with the others
-RearPulleyOffset = 10;
-
+// Center of the belt offset as calculated from the center top of the MGN12 block
 EVAFrontUpperBeltX = 17;
 EVAFrontLowerBeltX = -26;
 
