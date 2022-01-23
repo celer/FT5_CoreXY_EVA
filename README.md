@@ -16,4 +16,4 @@ This is a work in progress and no STLs for printing have been created yet.
  * Reuse as many peices as I can from my existing FT5
  * Share with the community so that others can extend the lives of their FT5s
  
-[[/images/top.png|Top of printer]]
+[/images/top.png|Top of printer]
