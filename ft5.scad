@@ -28,37 +28,37 @@ CornerPDWN = 12; // Outside diameter with belt
 //
 // This is the distance between the centers of the exterior 2020 extrusions, measured 
 // at center
-ExteriorWidth=520;
-ExteriorDepth=482;
+ExteriorWidth = 520;
+ExteriorDepth = 482;
 
 // The inteior space of the XY carriage area
-InteriorWidth=401;
-InteriorDepth=482;
+InteriorWidth = 401;
+InteriorDepth = 482;
 
 // Center of XY Carriage height
-XYCarriageHeight=525;
+XYCarriageHeight = 525;
 
 // Total Length of the 2020 extrusion for the X axis
-X2020Length=500;
+X2020Length = 500;
 
 // FIXME this has an issue with hitting the Y blocks. 
 // How far off the Y MGN12 block the X 2020 extrusion is
-XCarriageMountHeight=5;
+XCarriageMountHeight = 7;
 
 // Overall height of the printer
-Height=720;
+Height = 720;
 
 //This is how thick the belt is so the front pulleys can be placed correctly
-BeltThickness=1.7;
+BeltThickness = 1.7;
 
 // The height of the belt, in theory changing this to a wider belt should just work
-BeltHeight=6;
+BeltHeight = 6;
 
-MotorX=42.3;
-MotorY=42.3;
+MotorX = 42.3;
+MotorY = 42.3;
 
 // Total height of an MGN12 rail and block 
-MGN12Height=13;
+MGN12Height = 13;
 
 ///////////////////////////////////////////// EVA Platform ////////////////////////////////
 /// The EVA Carriage platform is meant to allow easy swapping of carriages so this is used
@@ -66,56 +66,59 @@ MGN12Height=13;
 // see https://main.eva-3d.page/
 
 // Belt Offsets as calculated from the X block
-EVAFrontBeltY=15.5;
+EVAFrontBeltY = 15.5;
 
-EVAFrontUpperBeltZ=-18;
-EVAFrontLowerBeltZ=-30;
+EVAFrontUpperBeltZ = -18;
+EVAFrontLowerBeltZ = -30;
 
 //How much to offset each pulley so that doesn't interfer with the others
-RearPulleyOffset=10;
+RearPulleyOffset = 10;
 
-EVAFrontUpperBeltX=17;
-EVAFrontLowerBeltX=-26;
+EVAFrontUpperBeltX = 17;
+EVAFrontLowerBeltX = -26;
 
 // Belt Offsets as calculated from the X block
-EVABackBeltY=-15.5;
+EVABackBeltY = -15.5;
 
-EVABackUpperBeltZ=-18;
-EVABackLowerBeltZ=-30;
+EVABackUpperBeltZ = -18;
+EVABackLowerBeltZ = -30;
 
-EVABackUpperBeltX=47;
-EVABackLowerBeltX=-47;
+EVABackUpperBeltX = 47;
+EVABackLowerBeltX = -47;
 
-Extrusion2020Height=20;
-Extrusion2020Width=20;
+Extrusion2020Height = 20;
+Extrusion2020Width = 20;
 
 ///////////////////////////////////////// BED Details /////////////////////////////////////////
 
 // The bed is 35mm forward of the Y center, AFAIK
-BedCenterY=35;
+BedCenterY = 35;
 
-BedX=325;
-BedY=325;
+BedX = 325;
+BedY = 325;
 
 ////////////////////////////////////////// XY Carriage center on the bed /////////////////////////
 // Change this to simulate movement
-X=0;  //(-150 to 150)
-Y=0;  //(-150 to 150)
+X = -56;  //(-150 to 150)
+Y = 30;  //(-150 to 150)
+
 
 // Calculated location
-YLocation=InteriorDepth/2-BedCenterY+X;
-XLocation=InteriorWidth/2+Y;
+YLocation = InteriorDepth/2 - BedCenterY+X;
+XLocation = InteriorWidth/2 + Y;
 
 
 // Calculated upper and lower belt heights
-LowerBeltHeight=XYCarriageHeight+Extrusion2020Height/2+MGN12Height+XCarriageMountHeight+Extrusion2020Height+MGN12Height+EVABackLowerBeltZ;
+LowerBeltHeight = XYCarriageHeight + Extrusion2020Height/2 +
+                MGN12Height + XCarriageMountHeight + Extrusion2020Height + MGN12Height + EVABackLowerBeltZ;
 
-UpperBeltHeight=XYCarriageHeight+Extrusion2020Height/2+MGN12Height+XCarriageMountHeight+Extrusion2020Height+MGN12Height+EVABackUpperBeltZ;
+UpperBeltHeight = XYCarriageHeight + Extrusion2020Height/2 + 
+                MGN12Height + XCarriageMountHeight + Extrusion2020Height + MGN12Height + EVABackUpperBeltZ;
 
 
 
 module frame(){
-     %union() /*color("lightgrey")*/  {
+     union() color("lightgrey")  {
         for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
             for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
                   translate([x,y,Height/2]) cube([20,20,Height],center=true); 
@@ -181,14 +184,91 @@ module frame(){
     red_belt_path();
     blue_belt_path();
    
-    red_motor_pulley()translate([0,0,10]) color("darkgrey") nema17();
+    red_motor_pulley() translate([0,0,10]) color("darkgrey") nema17();
     blue_motor_pulley() translate([0,0,10]) color("darkgrey") nema17();
 
-    //60 / 135
-    translate([0,BedCenterY,XYCarriageHeight-20]) color("lightgrey") cube([BedX,BedY,2],center=true);
+    // Draw the bed in to give some idea of where the extruder needs to travel
+    translate([0,BedCenterY,XYCarriageHeight-40]) color("lightgrey"){
+        cube([BedX,BedY,2],center=true);
+        translate([0,0,20]) cube([300,300,2],center=true);
+
+    }
     
  
 }
+
+module rear_left_pulley_mount(){
+    difference(){
+        union(){
+           translate([0,0,8]) union(){
+                hull(){
+                    red_rear_left_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
+                    translate([ExteriorWidth/2,-ExteriorDepth/2,UpperBeltHeight])cube([30,30,5],center=true);
+                }
+                blue_rear_left_pulley() translate([0,0,-3]) cylinder(r=CornerPDWN/2+5/2,h=15);
+                translate([ExteriorWidth/2,-ExteriorDepth/2,UpperBeltHeight-5])cube([30,30,10],center=true);
+           }
+           translate([0,0,-20]) union(){
+                hull(){
+                    red_rear_left_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
+                    translate([ExteriorWidth/2,-ExteriorDepth/2,UpperBeltHeight])cube([30,30,5],center=true);
+                }
+                 red_rear_left_pulley() cylinder(r=CornerPDWN/2+5/2,h=15);
+                 translate([ExteriorWidth/2,-ExteriorDepth/2,UpperBeltHeight+5])cube([30,30,10],center=true);
+
+            }
+        }
+        red_belt_path(BeltThickness=3);
+        blue_belt_path(BeltThickness=3);
+        blue_rear_left_pulley() cylinder(r=5.1/2,h=100,center=true);
+        red_rear_left_pulley() cylinder(r=5.1/2,h=100,center=true);
+
+
+    }
+}
+rear_left_pulley_mount();
+
+module rear_right_pulley_mount(){
+    difference(){
+        union(){
+           translate([0,0,-8]) union(){
+                hull(){
+                    blue_rear_right_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
+                    translate([-ExteriorWidth/2,-ExteriorDepth/2,LowerBeltHeight])cube([30,30,5],center=true);
+                }
+                red_rear_right_pulley() translate([0,0,-12]) cylinder(r=CornerPDWN/2+5/2,h=15);
+                translate([-ExteriorWidth/2,-ExteriorDepth/2,LowerBeltHeight+5])cube([30,30,10],center=true);
+           }
+           
+           translate([0,0,20]) union(){
+                hull(){
+                    blue_rear_right_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
+                    translate([-ExteriorWidth/2,-ExteriorDepth/2,LowerBeltHeight])cube([30,30,5],center=true);
+                }
+                 blue_rear_right_pulley() translate([0,0,-15]) cylinder(r=CornerPDWN/2+5/2,h=15);
+                 translate([-ExteriorWidth/2,-ExteriorDepth/2,LowerBeltHeight-5])cube([30,30,10],center=true);
+
+            }
+        }
+        red_belt_path(BeltThickness=3);
+        blue_belt_path(BeltThickness=3);
+        blue_rear_right_pulley() cylinder(r=5.1/2,h=100,center=true);
+        red_rear_right_pulley() cylinder(r=5.1/2,h=100,center=true);
+        
+        translate([-ExteriorWidth/2,-ExteriorDepth/2,LowerBeltHeight-5]) rotate([90,0,0]) cylinder(r=5.1/2,h=30);
+        translate([-ExteriorWidth/2-20,-ExteriorDepth/2,LowerBeltHeight-5]) rotate([0,90,0]) cylinder(r=5.1/2,h=30);
+        
+        translate([-ExteriorWidth/2,-ExteriorDepth/2,LowerBeltHeight+15]) rotate([90,0,0]) cylinder(r=5.1/2,h=30);
+        translate([-ExteriorWidth/2-20,-ExteriorDepth/2,LowerBeltHeight+15]) rotate([0,90,0]) cylinder(r=5.1/2,h=30);
+ 
+ 
+        
+
+    }
+}
+
+rear_right_pulley_mount();
+
 
 // The top center of the block the extruder should be mounted to
 module xy_block(){
@@ -201,7 +281,7 @@ module xy_block(){
 
 // Blue belt location definitions
 
-function blue_motor_x() = ExteriorWidth/2-10;
+function blue_motor_x() = ExteriorWidth/2-11;
 
 
 module blue_motor_pulley(){
@@ -216,14 +296,17 @@ module blue_xaxis_pulley_from_motor(){
 }
 
 module blue_rear_left_pulley(){
-    translate([blue_motor_x(),-ExteriorDepth/2+RearPulleyOffset,LowerBeltHeight]) children();
+    translate([blue_motor_x(),
+              -ExteriorDepth/2+RearPulleyOffset*2.5,
+                LowerBeltHeight
+            ]) children();
 }
 
 module blue_rear_right_pulley(){
     translate([
         // B1: This X value MUST be the same as the X value B2
         -blue_motor_x()+MotorPulleyDWB/2+XPulleySmoothDWB/2-BeltThickness,
-        -ExteriorDepth/2+RearPulleyOffset*3,
+        -ExteriorDepth/2+RearPulleyOffset*4,
         LowerBeltHeight]) children();
 }
 
@@ -235,7 +318,7 @@ module blue_xaxis_pulley_from_rear(){
         LowerBeltHeight])  children(); 
 }
 
-module blue_belt_path(){
+module blue_belt_path(BeltThickness=BeltThickness,BelthHeight=BeltHeight){
  // Create the blue belt path 
     color("blue"){
         hull(){
@@ -299,9 +382,12 @@ module blue_belt_path(){
     }
 }
 
+
+
+
 // Red belt location definitions
 
-function red_motor_x() = -ExteriorWidth/2+10;
+function red_motor_x() = -ExteriorWidth/2+11;
 
 
 module red_motor_pulley(){
@@ -319,11 +405,12 @@ module red_rear_left_pulley(){
     translate([
         // R1: This value MUST be the same as R2
         -red_motor_x()-MotorPulleyDWB/2-XPulleySmoothDWB/2+BeltThickness,
-        -ExteriorDepth/2+RearPulleyOffset*3,UpperBeltHeight]) children();
+        -ExteriorDepth/2+RearPulleyOffset*4,
+        UpperBeltHeight]) children();
 }
 
 module red_rear_right_pulley(){
-    translate([red_motor_x(),-ExteriorDepth/2+RearPulleyOffset*2,UpperBeltHeight]) children();
+    translate([red_motor_x(),-ExteriorDepth/2+RearPulleyOffset*2.5,UpperBeltHeight]) children();
 }
 
 module red_xaxis_pulley_from_rear(){
@@ -335,7 +422,7 @@ module red_xaxis_pulley_from_rear(){
         children(); 
 }
 
-module red_belt_path(){
+module red_belt_path(BelthThickness=BeltThickness,BeltThickness=BeltThickness){
     // Create the red belt path 
     color("red"){
         hull(){
@@ -399,7 +486,7 @@ module red_belt_path(){
     }
 }
 
-rotate([0,0,180]) frame();
+ frame();
 
 
 
@@ -438,6 +525,18 @@ module EVAHemeraCarriage(){
 module nema17(){
     translate([0,0,19]) rotate([0,180,0])  import("Motor_NEMA17.stl");
 }
+
+
+module nema17_cutout(){
+    translate([0,0,48/2+2]) cube([42.4,42.4,48],center=true);
+    cylinder(r=23/2,h=20,center=true);
+    for(x=[-31/2,31/2]){
+        for(y=[-31/2,31/2]){
+            translate([x,y,0]) cylinder(r=3.1/2,h=20,center=true);
+        }
+    }
+}
+
 
 module mgn12_x_rail(length=400,block=400/2){
     translate([0,0,4]) cube([length,12,8],center=true);
