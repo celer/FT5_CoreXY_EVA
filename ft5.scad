@@ -60,7 +60,7 @@ InteriorWidth = 420;
 InteriorDepth = 482;
 
 // Center of XY Carriage height
-XYCarriageHeight = 525;
+XYCarriageHeight = 532;
 
 // Total Length of the 2020 extrusion for the X axis
 X2020Length = 500;
@@ -86,6 +86,17 @@ MGN12Height = 13;
 
 //How much to offset each pulley so that doesn't interfer with the others
 RearPulleyOffset = 10;
+
+
+// Z Axis dimensions
+ZAxisLinearRodOffsetsFromFront=[117,317];
+ZAxisMotorOffset=215.5;
+ZAxisSideOffset=58;
+
+// Enclosure
+EnclosureWidth=495;
+EnclosureHeight=172;
+EnclosureDepth=85;
 
 ///////////////////////////////////////////// EVA Platform ////////////////////////////////
 /// The EVA Carriage platform is meant to allow easy swapping of carriages so this is used
@@ -131,8 +142,8 @@ BedY = 325;
 
 ////////////////////////////////////////// XY Carriage center on the bed /////////////////////////
 // Change this to simulate movement
-X = 160;  //(-150 to 150)
-Y = 160;  //(-150 to 150)
+X = 150;  //(-150 to 150)
+Y = 150;  //(-150 to 150)
 
 
 // Calculated location
@@ -159,9 +170,7 @@ module frame(){
                   translate([x,y,Height/2]) cube([20,20,Height],center=true); 
             }
         }
-        
-        
-            
+                
    
         // XYCarriage
         translate([0,-ExteriorDepth/2,XYCarriageHeight]) cube([ExteriorWidth-20,20,20],center=true);
@@ -193,6 +202,17 @@ module frame(){
         translate([-ExteriorWidth/2,ExteriorDepth/2+10+2.5, Height-30]) rotate([0,0,0]) C2020(); 
         translate([-ExteriorWidth/2,-ExteriorDepth/2-10-2.5, Height-30]) rotate([0,0,0]) C2020();
         
+        translate([ExteriorWidth/2+10+2.5,ExteriorDepth/2, 30]) rotate([180,0,-90]) C2020(); 
+        translate([ExteriorWidth/2+10+2.5,-ExteriorDepth/2, 30]) rotate([180,0,90]) C2020();
+        translate([ExteriorWidth/2,ExteriorDepth/2+10+2.5, 30]) rotate([180,0,180]) C2020(); 
+        translate([ExteriorWidth/2,-ExteriorDepth/2-10-2.5, 30]) rotate([180,0,-180]) C2020();
+        
+        translate([-ExteriorWidth/2-10-2.5,ExteriorDepth/2, 30]) rotate([180,0,-90]) C2020(); 
+        translate([-ExteriorWidth/2-10-2.5,-ExteriorDepth/2, 30]) rotate([180,0,90]) C2020();
+        translate([-ExteriorWidth/2,ExteriorDepth/2+10+2.5, 30]) rotate([180,0,0]) C2020(); 
+        translate([-ExteriorWidth/2,-ExteriorDepth/2-10-2.5, 30]) rotate([180,0,0]) C2020();
+        
+        
         // Top Frame
         translate([0,-ExteriorDepth/2,Height-10]) cube([ExteriorWidth-20,20,20],center=true);
         translate([0,ExteriorDepth/2,Height-10]) cube([ExteriorWidth-20,20,20],center=true);
@@ -206,7 +226,34 @@ module frame(){
         
         translate([-ExteriorWidth/2,0,10]) cube([20,ExteriorDepth-20,20],center=true);
         translate([ExteriorWidth/2,0,10]) cube([20,ExteriorDepth-20,20],center=true);
+  
     }
+    
+    // Enclosure
+    translate([0,-ExteriorDepth/2+EnclosureDepth/2-15,20+7+EnclosureHeight/2]) cube([EnclosureWidth,EnclosureDepth,EnclosureHeight],center=true);
+
+    
+    // Bottom Plate
+    difference(){
+        translate([0,0,23.5]) cube([ExteriorWidth+20,ExteriorDepth+20,7],center=true);
+        
+        for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
+            for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
+                  translate([x,y,Height/2]) cube([20,20,Height],center=true); 
+            }
+        }
+        // From front
+        // 16D @ 117 from front / 58mm from side
+        // 12D @ 215.5 from front / 
+        // 16D @ 317 from front / 
+        for (y=ZAxisLinearRodOffsetsFromFront){
+            translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) cylinder(r=16/2,h=100);
+            translate([-ExteriorWidth/2+10+ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) cylinder(r=16/2,h=100);
+        }
+        translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]) cylinder(r=16/2,h=100);
+        translate([-ExteriorWidth/2+10+ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]) cylinder(r=16/2,h=100);
+    }
+    
     
     // Y rail
     translate([-InteriorWidth/2,0,XYCarriageHeight+Extrusion2020Height/2]) mgn12_y_rail();
@@ -269,6 +316,12 @@ module C2020 (){
             translate([x+20,0,20]) rotate([90,0,0]) cylinder(r=5.1/2,h=30,center=true);
         }
     }
+    for(z=[-20,0,20]){
+            translate([0,0,z]) rotate([90,0,0]) cylinder(r=9/2,h=15,center=true);
+    }
+    for(x=[-20,0,20]){
+            translate([x+20,0,20]) rotate([90,0,0]) cylinder(r=9/2,h=15,center=true);
+    }
 }
 
 
@@ -287,15 +340,29 @@ module T2020 (){
             translate([x+20,0,0]) rotate([90,0,0]) cylinder(r=5.1/2,h=30,center=true);
         }
     }
+    for(z=[-20,0,20]){
+            translate([0,0,z]) rotate([90,0,0]) cylinder(r=9/2,h=15,center=true);
+    }
+    for(x=[-20,0,20]){
+            translate([x+20,0,0]) rotate([90,0,0]) cylinder(r=9/2,h=15,center=true);
+    }
 }
 
 
 module rear_left_pulley_mount(){
     difference(){
         union(){
+            translate([0,0,UpperBeltHeight-LowerBeltHeight+CornerPH/2+5/2]) union(){
+                hull(){
+                    red_rear_left_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
+                    translate([ExteriorWidth/2-2.5,-ExteriorDepth/2+2.5,LowerBeltHeight])cube([25,25,5],center=true);
+                }
+            }    
+            
+            
             //25mm bolt
             //blue_rear_left_pulley() translate([0,0,-5]) cylinder(r=5.1/2,h=30,center=true);
-           translate([0,0,-CornerPH/2-5/2-CornerPulleyMountSpacer]) union(){
+           translate([0,0,-CornerPH/2-5/2]) union(){
                 hull(){
                     red_rear_left_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
                     translate([ExteriorWidth/2-2.5,-ExteriorDepth/2+2.5,LowerBeltHeight])cube([25,25,5],center=true);
@@ -303,20 +370,15 @@ module rear_left_pulley_mount(){
                 translate([ExteriorWidth/2-15,-ExteriorDepth/2-10,LowerBeltHeight])
                     cube([25,25,UpperBeltHeight-LowerBeltHeight+15+2*CornerPulleyMountSpacer]);
            }
-           
-           translate([0,0,UpperBeltHeight-LowerBeltHeight+CornerPH/2+5/2+CornerPulleyMountSpacer]) union(){
-                hull(){
-                    red_rear_left_pulley() cylinder(r=CornerPDWN/2+10/2,h=5,center=true);
-                    translate([ExteriorWidth/2-2.5,-ExteriorDepth/2+2.5,LowerBeltHeight])cube([25,25,5],center=true);
-                }    
-            }
-           
+          
         }
         
         
         
-        blue_rear_left_pulley() cylinder(r=5.0/2,h=100,center=true);
-        red_rear_left_pulley() cylinder(r=5.0/2,h=100,center=true);
+
+        
+        blue_rear_left_pulley() translate([0,0,8]) M5x25M_ShoulderBolt();
+        red_rear_left_pulley() translate([0,0,20]) M5x25M_ShoulderBolt();
        
         // FIXME This is not calculated correctly from a height perspective
         translate([ExteriorWidth/2,-ExteriorDepth/2,(LowerBeltHeight+CornerPH+CornerPulleyMountSpacer)-5.1]){
@@ -339,34 +401,72 @@ module x_endstop_placement(){
         translate([-InteriorWidth/2+10,-ExteriorDepth/2+60,XYCarriageHeight-10]) children();
 }
 
-module x_endstop_mount(){
+module x_endstop_rail_mount(){
     x_endstop_placement() {
         difference(){
             union(){
-                cube([3,18,42]);
-                translate([0,15,0]) cube([16,3,42]);
+                cube([3,30,20]);
+                cube([3,15,27]);
 
-                translate([16.3-3.5,22,40.6-3.5]) rotate([90,0,0]) cylinder(r=7/2,h=5);
-                translate([16.3-3.5,22,40.6-3.5-19]) rotate([90,0,0]) cylinder(r=7/2,h=5);
+                translate([0,0,27]) cube([30,15,3]);
+                translate([0,0,25]) cube([30,2,5]);
+
+
+        
             }
-            translate([16.3-3.5,22,40.6-3.5]) rotate([90,0,0]) cylinder(r=2.9/2,h=150,center=true);
-            translate([16.3-3.5,22,40.6-3.5-19]) rotate([90,0,0]) cylinder(r=2.9/2,h=150,center=true);
-            for (z=[-3:1:3]){
-                translate([10,7,10+z]) rotate([0,90,0]) cylinder(r=4.1/2,h=100,center=true);
+            translate([10,7,10]) rotate([0,90,0]) cylinder(r=4.2/2,h=100,center=true); 
+            translate([10,24,10]) rotate([0,90,0]) cylinder(r=4.2/2,h=100,center=true);      
+            for(x=[-5:1:10]){
+                    translate([x+15,9,26])cylinder(r=3.2/2,h=100);
             }
         }
     }
 }
 
+module x_endstop_sensor_mount(){
+    x_endstop_placement() {
+        difference(){
+       
+            union(){
+
+                translate([12.5,2,25]) cube([18,38,3]);
+
+                
+                translate([16.3-3.5+14,40.6-3.5,25]) rotate([0,0,0]) cylinder(r=7/2,h=5,center=true);
+                translate([16.3-3.5+14,40.6-3.5-19,25]) rotate([0,0,0]) cylinder(r=7/2,h=5,center=true);
+                
+                
+              
+                translate([21,9,25])cylinder(r=5/2,h=5,center=true);
+                
+            }
+            translate([10,7,10]) rotate([0,90,0]) cylinder(r=4.2/2,h=100,center=true); 
+            translate([10,30,10]) rotate([0,90,0]) cylinder(r=4.2/2,h=100,center=true); 
+            
+            translate([21,9,23])cylinder(r=2.9/2,h=50,center=true);
+
+           
+            translate([16.3-3.5+14,40.6-3.5,22]) rotate([0,0,0]) cylinder(r=2.9/2,h=150,center=true);
+            translate([16.3-3.5+14,40.6-3.5-19,22]) rotate([0,0,0]) cylinder(r=2.9/2,h=150,center=true);
+        }
+    }
+}
+
+module x_endstop_mount(){
+    x_endstop_rail_mount();
+    x_endstop_sensor_mount();
+
+}
+
 module x_endstop(){
-    x_endstop_placement() translate([0,22,0])   rotate([0,270,270]) import("models/MakerBot_Endstop.stl");
+    x_endstop_placement() translate([13,0,22])   rotate([180,0,90]) import("models/MakerBot_Endstop.stl");
 }
 
 
 
 module y_endstop(){
     //https://www.thingiverse.com/thing:2405504/files
-    y_endstop_placement() translate([0,0,11]) import("models/MakerBot_Endstop.stl");
+    y_endstop_placement() rotate([0,0,0]) translate([0,0,11]) import("models/MakerBot_Endstop.stl");
 }
 
 module y_endstop_placement(){
@@ -377,29 +477,37 @@ module y_endstop_mount(){
     y_endstop_placement() {
         difference(){
             union(){
-                cube([40.6,30,3]);
+                translate([0,-5,0]) cube([40.6,35,3]);
                   
-                translate([40.6-3.5,16.3-3.5,0]){
-                    cylinder(r=7/2,h=11);
-                }
-   
+                rotate([0,0,0]) {
+                    translate([40.6-3.5,16.3-3.5,0]){
+                        cylinder(r=7/2,h=11);
+                    }
+       
 
-                translate([40.6-3.5-19,16.3-3.5,0]){
-                    cylinder(r=7/2,h=11);
+                    translate([40.6-3.5-19,16.3-3.5,0]){
+                        cylinder(r=7/2,h=11);
+                    }
                 }
             }
             
             translate([10,25,0]) difference(){
                 cylinder(r=5.2/2,h=20,center=true);
             }
-             
-            translate([40.6-3.5,16.3-3.5,0]){
-                cylinder(r=2.9/2,h=11);
+            
+            translate([10,0,0]) difference(){
+                cylinder(r=5.2/2,h=20,center=true);
             }
-   
+             
+            rotate([0,0,0]){
+                translate([40.6-3.5,16.3-3.5,0]){
+                    cylinder(r=2.9/2,h=11);
+                }
+       
 
-            translate([40.6-3.5-19,16.3-3.5,0]){
-                cylinder(r=2.9/2,h=11);
+                translate([40.6-3.5-19,16.3-3.5,0]){
+                    cylinder(r=2.9/2,h=11);
+                }
             }
 
         }
@@ -409,9 +517,106 @@ module y_endstop_mount(){
     }
 }
 
+// This used to properly drill a carbon fiber 20x20 rail
+module xy_carriage_mount_cf_tube_upper_drill_jig(){
+    $fn=30;
+    // Y rail
+    {
+       
+        
+        difference(){
+            union(){
+                           //blue_xaxis_pulley_from_motor() translate([0,0,-5]) cylinder(r=6.3/2,h=30,center=true);
+
+          
+                   translate([InteriorWidth/2+25,0,XYCarriageHeight+10]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) { 
+                       
+                        difference(){
+                            cube([50,25,6],center=true);
+                            translate([0,0,-3]) cube([50,20.6,5],center=true);
+                        }
+                    }
+                    translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) {
+                         difference(){
+                            cube([35,25,6],center=true);
+                            translate([0,0,-3]) cube([50,20.6,5],center=true);
+                        }
+                    }
+                        
+
+                
+                 
+            }
+            for(x=[0:25:175]) {
+                 translate([x+12.5,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=3.1/2,h=100,center=true);
+            }
+            translate([InteriorWidth/2+33,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.1/2,h=100,center=true);
+            translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.1/2,h=100,center=true);
+        }
+       
+    }
+}
 
 
-module xy_carriage_mount_upper(){
+module xy_carriage_mount_upper_cf_tube(){
+    // Y rail
+    {
+       
+        difference(){
+            union(){
+                           //blue_xaxis_pulley_from_motor() translate([0,0,-5]) cylinder(r=6.3/2,h=30,center=true);
+
+                hull(){
+                   translate([InteriorWidth/2+25,0,XYCarriageHeight+10]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) { 
+                       cube([50,20,5],center=true);
+                       
+                   }    
+                    
+                    
+                    blue_xaxis_pulley_from_motor() translate([0,0,XYCarriageHeight-UpperBeltHeight+MGN12Height+Extrusion2020Height/2+Extrusion2020Height+XCarriageMountHeight]) 
+                        cylinder(r=XPulleySmoothDWB/2+2,h=5);
+                    red_xaxis_pulley_from_rear() translate([0,0,XYCarriageHeight-LowerBeltHeight++MGN12Height+Extrusion2020Height/2+Extrusion2020Height+XCarriageMountHeight]) 
+                        cylinder(r=XPulleyToothedDWB/2+2,h=5);
+                }
+                
+                translate([InteriorWidth/2+28,0,XYCarriageHeight+10-2.5]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) { 
+                       cube([40,28,10],center=true);   
+                   }
+                 
+            }
+             translate([InteriorWidth/2+25,0,XYCarriageHeight-2.5]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) { 
+                       cube([50,20.6,20],center=true);   
+                   }
+            
+            translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() {
+                for(x=[-10,10]){
+                    for(y=[-10,10]){
+                           translate([x,y,5]) cylinder(r=6.2/2,h=10);
+                           translate([x,y,-1]) cylinder(r=3.1/2,h=10);
+                    }
+                }
+            }
+            /*
+            blue_xaxis_pulley_from_motor() cylinder(r=5.3/2,h=100,center=true);
+            red_xaxis_pulley_from_rear() cylinder(r=5.3/2,h=100,center=true);*/
+            blue_xaxis_pulley_from_motor() translate([0,0,8]) M5x25M_ShoulderBolt();
+            red_xaxis_pulley_from_rear()translate([0,0,20]) M5x25M_ShoulderBolt();
+        
+            blue_xaxis_pulley_from_motor() translate([0,0,XYCarriageHeight-UpperBeltHeight+MGN12Height+Extrusion2020Height/2+Extrusion2020Height+XCarriageMountHeight+5]) translate([-2,-8,-0.5]) linear_extrude(1) text("F",size=5,valign="center");
+            
+            
+            translate([InteriorWidth/2+33,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.1/2,h=100,center=true);
+            translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.1/2,h=100,center=true);
+
+            translate([InteriorWidth/2+33,0,XYCarriageHeight+45]) mgn12_y_block() cylinder(r=10/2,h=10,center=true);
+            translate([InteriorWidth/2,0,XYCarriageHeight+45]) mgn12_y_block() cylinder(r=10/2,h=10,center=true);
+        }
+       
+    }
+  
+}
+
+module xy_carriage_mount_upper_al_2020(){
     // Y rail
     {
        
@@ -444,9 +649,11 @@ module xy_carriage_mount_upper(){
                     }
                 }
             }
+            /*
             blue_xaxis_pulley_from_motor() cylinder(r=5.3/2,h=100,center=true);
-            red_xaxis_pulley_from_rear() cylinder(r=5.3/2,h=100,center=true);
-            
+            red_xaxis_pulley_from_rear() cylinder(r=5.3/2,h=100,center=true);*/
+            blue_xaxis_pulley_from_motor() translate([0,0,8]) M5x25M_ShoulderBolt();
+            red_xaxis_pulley_from_rear()translate([0,0,20]) M5x25M_ShoulderBolt();
         
             blue_xaxis_pulley_from_motor() translate([0,0,XYCarriageHeight-UpperBeltHeight+MGN12Height+Extrusion2020Height/2+Extrusion2020Height+XCarriageMountHeight+5]) translate([-2,-8,-0.5]) linear_extrude(1) text("F",size=5,valign="center");
             
@@ -460,7 +667,76 @@ module xy_carriage_mount_upper(){
   
 }
 
-module xy_carriage_mount_lower(){
+module M5x25M_ShoulderBolt(){
+    cylinder(r=10.5/2,h=3);
+    translate([0,0,-25]) cylinder(r=5.15/2,h=25);
+    translate([0,0,-25-9]) cylinder(r=3.4/2,h=9);
+}
+
+module xy_carriage_mount_lower_cf_tube(){
+    // Y rail
+    {
+       
+        difference(){
+            union(){
+                translate([InteriorWidth/2+10,0,XYCarriageHeight+10]) mgn12_y_block() translate([-2.5,0,XCarriageMountHeight/2]) 
+                cube([50,20,XCarriageMountHeight],center=true);
+                hull(){
+                    translate([InteriorWidth/2-4,0,XYCarriageHeight+10]) mgn12_y_block() translate([0,0,5/2]) cube([20,40,5],center=true);
+                    translate([InteriorWidth/2+15,0,XYCarriageHeight+10]) mgn12_y_block() translate([0,0,5/2]) cube([50,20,5],center=true);
+                    
+                    blue_xaxis_pulley_from_motor() translate([0,0,XYCarriageHeight-UpperBeltHeight+MGN12Height+Extrusion2020Height/2]) 
+                        cylinder(r=XPulleySmoothDWB/2+2,h=5);
+                    red_xaxis_pulley_from_rear() translate([0,0,XYCarriageHeight-LowerBeltHeight++MGN12Height+Extrusion2020Height/2]) 
+                        cylinder(r=XPulleyToothedDWB/2+2,h=5);
+                    
+                    
+                    
+                }
+                translate([InteriorWidth/2+15+3,0,XYCarriageHeight+10+5]) mgn12_y_block() translate([0,0,5/2]) cube([40,27,10],center=true);
+                
+              
+            }
+            
+            translate([InteriorWidth/2+25,0,XYCarriageHeight-2.5]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) { 
+                cube([500,20.6,20],center=true);   
+            }
+            
+            translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() {
+                for(x=[-10,10]){
+                    for(y=[-10,10]){
+                           translate([x,y,5]) cylinder(r=6.2/2,h=10);
+                           translate([x,y,-1]) cylinder(r=3.1/2,h=10);
+                    }
+                }
+            }
+  
+            
+            blue_xaxis_pulley_from_motor() translate([0,0,8]){ 
+                M5x25M_ShoulderBolt();
+                translate([0,0,-28]) cylinder(r=4.5/2,h=40,center=true);
+                translate([0,0,-28]) cylinder(r=5.9/2,h=4,center=true);
+            }
+            red_xaxis_pulley_from_rear() translate([0,0,20]){
+                translate([0,0,-28]) cylinder(r=4.5/2,h=40,center=true);
+                translate([0,0,-28]) cylinder(r=5.9/2,h=4,center=true);
+            }
+            
+            blue_xaxis_pulley_from_motor() translate([0,0,XYCarriageHeight-UpperBeltHeight+MGN12Height+Extrusion2020Height/2+5]) translate([-2,-6,-0.5]) linear_extrude(2) text("F",size=5,valign="center");
+            
+            translate([InteriorWidth/2+33,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.2/2,h=100,center=true);
+          
+            translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.2/2,h=100,center=true);  
+            
+            translate([InteriorWidth/2+33,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=9/2,h=4,$fn=6);
+            translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=9/2,h=4,$fn=6);
+        }
+        
+    }
+  
+}
+
+module xy_carriage_mount_lower_al_2020(){
     // Y rail
     {
        
@@ -486,12 +762,16 @@ module xy_carriage_mount_lower(){
                     }
                 }
             }
-            blue_xaxis_pulley_from_motor() cylinder(r=5.3/2,h=100,center=true);
-            red_xaxis_pulley_from_rear() cylinder(r=5.3/2,h=100,center=true);
+            //blue_xaxis_pulley_from_motor() cylinder(r=5.3/2,h=100,center=true);
+            //red_xaxis_pulley_from_rear() cylinder(r=5.3/2,h=100,center=true);
+            
+            blue_xaxis_pulley_from_motor() translate([0,0,8]) M5x25M_ShoulderBolt();
+            red_xaxis_pulley_from_rear()translate([0,0,20]) M5x25M_ShoulderBolt();
             
             blue_xaxis_pulley_from_motor() translate([0,0,XYCarriageHeight-UpperBeltHeight+MGN12Height+Extrusion2020Height/2+5]) translate([-2,-8,-0.5]) linear_extrude(2) text("F",size=5,valign="center");
             
             translate([InteriorWidth/2+33,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.1/2,h=100,center=true);
+          
             translate([InteriorWidth/2-19,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=5.1/2,h=100,center=true);
             
             translate([InteriorWidth/2+33,0,XYCarriageHeight+10]) mgn12_y_block() cylinder(r=9/2,h=3);
@@ -503,6 +783,7 @@ module xy_carriage_mount_lower(){
 }
 
 module blue_motor_mount(){
+   
     difference(){
         union(){
             blue_motor_pulley() translate([0,0,10]) cube([45,45,5],center=true);
@@ -541,6 +822,7 @@ module blue_motor_mount(){
 }
 
 module red_motor_mount(){
+    
     difference(){
         union(){
             red_motor_pulley() translate([0,0,10]) cube([45,45,5],center=true);
@@ -561,6 +843,13 @@ module red_motor_mount(){
                 translate([-ExteriorWidth/2+10,ExteriorDepth/2-10,LowerBeltHeight+23-25+2.5]) cube([50,5,5],center=true);
             }
             
+             translate([-ExteriorWidth/2+35,ExteriorDepth/2-25,LowerBeltHeight+30]) rotate([-45,0,0])  
+                scale([0.9,1.2,1]) difference(){
+                    cylinder(r=9/2,h=3,center=true);
+                    cylinder(r=5/2,h=3,center=true);
+
+                }
+            
         } 
         red_motor_pulley() translate([0,0,10.5]) nema17_cutout();
         red_motor_pulley() translate([0,0,-5]) cube([40,40,25],center=true);
@@ -573,6 +862,7 @@ module red_motor_mount(){
             }
         }
     }
+    
 }
 
 
@@ -812,8 +1102,44 @@ module red_belt_path(BelthThickness=BeltThickness,BeltThickness=BeltThickness){
 //frame();
 //}
 
+module cable_mount(){
+    //translate([-50,-ExteriorDepth/2-10-5,Height-50]) cube([100,5,50]);
+    difference(){
+        union(){ 
+            translate([-30,-ExteriorDepth/2+10,Height-30]) cube([60,5,30]);    
+            translate([-30,-ExteriorDepth/2+10,Height-5-30]) cube([60,45,5]);
+                    
+            
+            translate([0,-ExteriorDepth/2+44,Height-35]) cylinder(r=13/2,h=4);
 
+           
+        }
+  
+        for(z=[-0:2:22]){
+            translate([0,-ExteriorDepth/2+10,Height-z]) rotate([90,0,0])  cylinder(r=16/2,h=20,center=true);
+        }
+        for(x=[-2:1:2]){
+            translate([-8-x,-ExteriorDepth/2+10,Height-22]) rotate([90,0,0])  cylinder(r=4.5/2,h=20,center=true);
+            translate([8-x,-ExteriorDepth/2+10,Height-22]) rotate([90,0,0])  cylinder(r=4.5/2,h=20,center=true);
 
+        }
+        
+        
+        translate([0,-ExteriorDepth/2+44,Height-35-1]) cylinder(r=13.1/2,h=5);
+        translate([0,-ExteriorDepth/2+44,Height-35-1]) cylinder(r=7/2,h=50);
+
+        for(x=[-8,8]){
+        translate([x,-ExteriorDepth/2+20,Height-35-1]) cylinder(r=5/2,h=50);
+        }
+        
+        for(x=[-20,20]){
+            translate([x,-ExteriorDepth/2+10,Height-10]) rotate([90,0,0])  cylinder(r=5.2/2,h=20,center=true);
+        }
+    }
+
+}
+
+//cable_mount();
 
 module EVAFrontUpperBelt(){
     translate([EVAFrontUpperBeltX,EVAFrontBeltY,EVAFrontUpperBeltZ]) children();
@@ -885,19 +1211,24 @@ module mgn12_y_block(length=400,block=400/2) {
     translate([0,InteriorDepth/2-YLocation,13]) children();
 }
 
+
+
 OUTPUT="";
 if (OUTPUT=="") {
     frame();
     blue_motor_mount();
     red_motor_mount();
-    xy_carriage_mount_lower();
-    xy_carriage_mount_upper();
-    mirror([1,0,0]) xy_carriage_mount_lower();
-    mirror([1,0,0]) xy_carriage_mount_upper();
+    xy_carriage_mount_lower_cf_tube();
+    xy_carriage_mount_upper_cf_tube();
+    mirror([1,0,0]) xy_carriage_mount_lower_cf_tube();
+    mirror([1,0,0]) xy_carriage_mount_upper_cf_tube();
     rear_left_pulley_mount();
     rear_right_pulley_mount();
     y_endstop_mount();
     y_endstop();
+    
+    x_endstop_mount();
+    x_endstop();
 } else {
     $fn=50;
 
@@ -905,37 +1236,184 @@ if (OUTPUT=="") {
         blue_motor_mount();
     } else if (OUTPUT=="right_motor_mount") {
         red_motor_mount();
-    } else if (OUTPUT=="left_xy_carriage_mount_lower") {
-        xy_carriage_mount_lower();
-    } else if (OUTPUT=="left_xy_carriage_mount_upper"){
-        xy_carriage_mount_upper();
-    } else if (OUTPUT=="right_xy_carriage_mount_lower") {
-        mirror([1,0,0]) xy_carriage_mount_lower();
-    } else if (OUTPUT=="right_xy_carriage_mount_upper"){
-        mirror([1,0,0]) xy_carriage_mount_upper();
+    } else if (OUTPUT=="left_xy_carriage_mount_lower_cf_tube") {
+        xy_carriage_mount_lower_cf_tube();
+    } else if (OUTPUT=="left_xy_carriage_mount_upper_cf_tube"){
+        xy_carriage_mount_upper_cf_tube();
+    } else if (OUTPUT=="left_xy_carriage_mount_lower_al_2020") {
+        xy_carriage_mount_lower_al_2020();
+    } else if (OUTPUT=="left_xy_carriage_mount_upper_al_2020"){
+        xy_carriage_mount_upper_al_2020();
+    } else if (OUTPUT=="right_xy_carriage_mount_lower_cf_tube") {
+        mirror([1,0,0]) xy_carriage_mount_lower_cf_tube();
+    } else if (OUTPUT=="right_xy_carriage_mount_upper_cf_tube"){
+        mirror([1,0,0]) xy_carriage_mount_upper_cf_tube();
+    } else if (OUTPUT=="right_xy_carriage_mount_lower_al_2020") {
+        mirror([1,0,0]) xy_carriage_mount_lower_al_2020();
+    } else if (OUTPUT=="right_xy_carriage_mount_upper_al_2020"){
+        mirror([1,0,0]) xy_carriage_mount_upper_al_2020();
     } else if (OUTPUT=="rear_left_pulley_mount"){
         rear_left_pulley_mount();
     } else if (OUTPUT=="rear_right_pulley_mount"){
         rear_right_pulley_mount();
     } else if (OUTPUT=="y_endstop_mount"){
         y_endstop_mount();
+    } else if (OUTPUT=="x_endstop_rail_mount"){
+        x_endstop_rail_mount();
+    } else if (OUTPUT=="x_endstop_sensor_mount"){
+        x_endstop_sensor_mount();
+    } else if (OUTPUT=="xy_carriage_mount_cf_tube_upper_drill_jig"){
+        xy_carriage_mount_cf_tube_upper_drill_jig();
     } else if (OUTPUT=="ft5"){
         frame();
         blue_motor_mount();
         red_motor_mount();
-        xy_carriage_mount_lower();
-        xy_carriage_mount_upper();
-        mirror([1,0,0]) xy_carriage_mount_lower();
-        mirror([1,0,0]) xy_carriage_mount_upper();
+        xy_carriage_mount_lower_cf_tube();
+        xy_carriage_mount_upper_cf_tube();
+        mirror([1,0,0]) xy_carriage_mount_lower_cf_tube();
+        mirror([1,0,0]) xy_carriage_mount_upper_cf_tube();
         rear_left_pulley_mount();
         rear_right_pulley_mount();
         y_endstop_mount();
-        //y_endstop();
+        x_endstop_mount();
     }
 
 }
 
 
+AcrylicCoverThickness=3;
+/*
+projection(){
+rotate([90,0,0]){
+//front_top_cover();
+front_lower_cover();
+}
+}*/
 
+/*
+front_top_cover();
+front_lower_cover();
+side_top_cover();
+back_top_cover();
+side_lower_cover();
+mirror([1,0,0]){
+    side_top_cover();
+    side_lower_cover();
+}
+top_cover();
+back_lower_cover();
 
+module side_top_cover(){
+    width=ExteriorDepth-10;
+    height=Height-XYCarriageHeight-10-10;
+    translate([ExteriorWidth/2+10+AcrylicCoverThickness/2+5,0,Height-(height)/2-15]) 
+        %cube([AcrylicCoverThickness,width,height],center=true);
+    echo("Side cover top",width,height);
+}
 
+module cover_exhaust_cutout(cut=true){
+    for(x=[-105/2,105/2]){
+        for(y=[-105/2,105/2]){
+            translate([x,0,y]) rotate([90,0,0]) cylinder(r=4.1/2,h=1000);
+        }
+    }
+    rotate([90,0,0]) cylinder(r=119/2,h=1000);
+
+}
+
+module side_lower_cover(){
+    width=ExteriorDepth-10;
+    height=XYCarriageHeight-10-10;
+     
+    %difference(){
+        translate([ExteriorWidth/2+10+AcrylicCoverThickness/2+5,0,XYCarriageHeight/2+5]) cube([AcrylicCoverThickness,width,height],center=true);
+        
+        translate([0,-ExteriorDepth/2+EnclosureDepth/2-15,20+7+EnclosureHeight/2]) cube([EnclosureWidth+200,EnclosureDepth,EnclosureHeight],center=true);
+
+    }
+    echo("Side lower cover",width,height);
+}
+
+module front_lower_cover(){
+    width=ExteriorWidth-10;
+    height=XYCarriageHeight-10-10;
+    translate([0,ExteriorDepth/2+10+AcrylicCoverThickness/2+5,XYCarriageHeight/2+5]) 
+    %difference(){  
+            cube([width,AcrylicCoverThickness,height],center=true);
+            cube([1,1000,3000],center=true);
+            for(x=[20,width-20]){
+                for(z=[60,height/2,height-60]){
+                    for(xh=[-10,10]){
+                        for(zh=[-10,10]){
+                        translate([x-width/2+xh,0,z-height/2+zh]) rotate([90,0,0]) 
+                            cylinder(r=3.4/2,h=10000,center=true);
+                        }
+                    }
+                }
+            }
+    }
+    echo("Front lower cover",width,height);
+}
+
+module back_lower_cover(){
+    //FIXME this is wrong some how
+    width=ExteriorWidth-10;
+    height=XYCarriageHeight-EnclosureHeight-32;
+    %translate([0,-ExteriorDepth/2-10-AcrylicCoverThickness/2-5,Height-EnclosureHeight-(height)/2-20]) difference() {
+        cube([width,AcrylicCoverThickness,height],center=true);
+        
+    }
+    echo("Back top cover",width,height);
+}
+
+module back_top_cover(){
+    //FIXME this is wrong some how
+    width=ExteriorWidth-10;
+    height=Height-XYCarriageHeight-10-10;
+    %translate([0,-ExteriorDepth/2-10-AcrylicCoverThickness/2-5,Height-(height)/2-15]) difference(){
+        cube([width,AcrylicCoverThickness,height],center=true);
+        cover_exhaust_cutout();
+    }
+    echo("Back top cover",width,height);
+}
+
+module front_top_cover(){
+    //FIXME this is wrong some how
+    width=ExteriorWidth-10;
+    height=Height-XYCarriageHeight-10-10;
+    translate([0,ExteriorDepth/2+10+AcrylicCoverThickness/2+5,Height-(height)/2-15]) 
+    %difference(){
+        cube([width,AcrylicCoverThickness,height],center=true);
+          cube([1,1000,3000],center=true);
+            for(x=[20,width-20]){
+                for(z=[height/2]){
+                    for(xh=[-10,10]){
+                        for(zh=[-10,10]){
+                        translate([x-width/2+xh,0,z-height/2+zh]) rotate([90,0,0]) 
+                            cylinder(r=3.4/2,h=10000,center=true);
+                        }
+                    }
+                }
+            }
+    }
+    echo("Front top cover",width,height);
+}
+
+module top_cover(){
+    %difference(){
+        translate([0,0,Height+AcrylicCoverThickness+5]) cube([ExteriorWidth,ExteriorDepth,AcrylicCoverThickness],center=true);  
+
+        //Cut a fairly large hole for cabling and bowden tube
+        translate([0,BedCenterY,0]){
+            cylinder(r=120/2,h=10000,center=true);
+            for(x=[-105/2,105/2]){
+                for(y=[-105/2,105/2]){
+                    translate([x,y,0]) cylinder(r=4/2,h=10000);
+                }
+            }
+        }
+    }
+}
+*/
+
+//cube([300,300,532]);
