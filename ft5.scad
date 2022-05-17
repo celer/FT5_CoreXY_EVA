@@ -1,3 +1,5 @@
+
+
 // Introduction    //////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 // 1. Measure and define your pulleys
@@ -55,15 +57,15 @@ ExteriorDepth = 482;
 
 // The inteior space of the XY carriage area 
 // measured center of extrusion to center of extrusion
-InteriorWidth = 420;
+InteriorWidth = ExteriorWidth-100;
 
-InteriorDepth = 482;
+InteriorDepth = ExteriorDepth;
 
 // Center of XY Carriage height
 XYCarriageHeight = 532;
 
 // Total Length of the 2020 extrusion for the X axis
-X2020Length = 500;
+X2020Length = ExteriorWidth-20;
 
 // FIXME this has an issue with hitting the Y blocks. 
 // How far off the Y MGN12 block the X 2020 extrusion is
@@ -91,12 +93,12 @@ RearPulleyOffset = 10;
 // Z Axis dimensions
 ZAxisLinearRodOffsetsFromFront=[117,317];
 ZAxisMotorOffset=215.5;
-ZAxisSideOffset=58;
+ZAxisSideOffset=60;
 
 // Enclosure
 EnclosureWidth=495;
 EnclosureHeight=172;
-EnclosureDepth=85;
+EnclosureDepth=78+5;
 
 ///////////////////////////////////////////// EVA Platform ////////////////////////////////
 /// The EVA Carriage platform is meant to allow easy swapping of carriages so this is used
@@ -137,7 +139,7 @@ EVAHemeraCarriage();*/
 // The bed is 35mm forward of the Y center, AFAIK
 BedCenterY = 35;
 
-BedX = 325;
+BedX = ExteriorWidth-220+25;
 BedY = 325;
 
 ////////////////////////////////////////// XY Carriage center on the bed /////////////////////////
@@ -229,31 +231,25 @@ module frame(){
   
     }
     
-    // Enclosure
-    translate([0,-ExteriorDepth/2+EnclosureDepth/2-15,20+7+EnclosureHeight/2]) cube([EnclosureWidth,EnclosureDepth,EnclosureHeight],center=true);
+    enclosure();
+   
 
     
-    // Bottom Plate
-    difference(){
-        translate([0,0,23.5]) cube([ExteriorWidth+20,ExteriorDepth+20,7],center=true);
-        
-        for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
-            for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
-                  translate([x,y,Height/2]) cube([20,20,Height],center=true); 
-            }
-        }
-        // From front
-        // 16D @ 117 from front / 58mm from side
-        // 12D @ 215.5 from front / 
-        // 16D @ 317 from front / 
-        for (y=ZAxisLinearRodOffsetsFromFront){
-            translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) cylinder(r=16/2,h=100);
-            translate([-ExteriorWidth/2+10+ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) cylinder(r=16/2,h=100);
-        }
-        translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]) cylinder(r=16/2,h=100);
-        translate([-ExteriorWidth/2+10+ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]) cylinder(r=16/2,h=100);
-    }
+    bottom_plate();
+    top_side_plate();
     
+    color("lightgrey"){
+        // Z Axis Linear Sliders
+        for (y=ZAxisLinearRodOffsetsFromFront){
+            translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-y,23.5]) cylinder(r=8/2,h=500);
+            translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-y,23.5]) cylinder(r=8/2,h=500);
+        }
+    
+    
+        // Z Axis Lead Screw
+        translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,23.5]) cylinder(r=8/2,h=500);
+        translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,23.5]) cylinder(r=8/2,h=500);
+    }
     
     // Y rail
     translate([-InteriorWidth/2,0,XYCarriageHeight+Extrusion2020Height/2]) mgn12_y_rail();
@@ -292,14 +288,302 @@ module frame(){
     red_motor_pulley() translate([0,0,10]) color("darkgrey") nema17();
     blue_motor_pulley() translate([0,0,10]) color("darkgrey") nema17();*/
 
-    // Draw the bed in to give some idea of where the extruder needs to travel
-    translate([0,BedCenterY,XYCarriageHeight-40]) color("lightgrey"){
-        cube([BedX,BedY,2],center=true);
-        translate([0,0,20]) cube([300,300,2],center=true);
 
+    z_axis_plate();
+
+    // Draw the bed in to give some idea of where the extruder needs to travel
+    translate([0,BedCenterY,XYCarriageHeight-40]) {      
+        color("lightgrey") difference(){
+            translate([0,0,20]) cube([BedX,BedY,2],center=true);
+                for (x=[-321/2,321/2]){
+                    for(y=[-321/2,321/2]){
+                        translate([x,y,0]) cylinder(r=3.5/2,h=100,center=true);
+                    }
+                }
+        }
     }
     
  
+}
+
+
+module top_side_plate(){
+    //FIXME remove 2020 cut outs
+    width=(ExteriorWidth-InteriorWidth)/2+20;
+    difference(){
+        union(){
+            translate([-InteriorWidth/2-width/2+10,0,XYCarriageHeight-10-2.5]) cube([width,ExteriorDepth+20,5],center=true);
+            translate([InteriorWidth/2+width/2-10,0,XYCarriageHeight-10-2.5]) cube([width,ExteriorDepth+20,5],center=true);
+        }
+
+        for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
+            for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
+                  translate([x,y,Height/2]) cube([21,21,Height],center=true); 
+            }
+        }
+
+        for (y=ZAxisLinearRodOffsetsFromFront){
+                translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) {
+                    cylinder(r=10/2,h=1000);
+                    for(y=[-43/2,43/2]){
+                        translate([0,y,0]) cylinder(r=5.5/2,h=1000);
+                    }
+                }
+                translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) {
+                    cylinder(r=10/2,h=1000);
+                    for (y=[-43/2,43/2]){
+                         translate([0,y,0]) cylinder(r=5.5/2,h=1000); 
+                    }
+                }
+            }
+            translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]){
+                cylinder(r=10/2,h=1000);
+                for (y=[-48/2,48/2]){
+                         translate([0,y,0]) cylinder(r=5.5/2,h=1000); 
+                }
+            }
+            translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]){
+                cylinder(r=10/2,h=1000);
+                for (y=[-48/2,48/2]){
+                         translate([0,y,0]) cylinder(r=5.5/2,h=1000); 
+                }
+        }
+        
+        for(y=[-200:100:200]){
+            translate([ExteriorWidth/2,y,0]) cylinder(r=5.5/2,h=1000);
+            translate([-ExteriorWidth/2,y,0]) cylinder(r=5.5/2,h=1000);
+            
+            translate([InteriorWidth/2,y,0]) cylinder(r=5.5/2,h=1000);
+            translate([-InteriorWidth/2,y,0]) cylinder(r=5.5/2,h=1000);
+        }
+    }
+}
+
+
+module z_axis_plate(){
+    // Draw the bed in to give some idea of where the extruder needs to travel
+    difference(){
+        translate([0,BedCenterY,XYCarriageHeight-40]) {
+            difference(){
+                minkowski(){
+                    cube([InteriorWidth+20,BedY+10,2],center=true);
+                    cylinder(r=20/2,h=2);
+                }
+                for (x=[-321/2,321/2]){
+                    for(y=[-321/2,321/2]){
+                        translate([x,y,0]) cylinder(r=3.5/2,h=100,center=true);
+                    }
+                }
+                // Sidewinder X1 mounting holes
+                for (x=[-(310-55)/2,(310-55)/2]){
+                    for(y=[-(310-55)/2,(310-55)/2]){
+                        translate([x,y,0]) cylinder(r=5.5/2,h=100,center=true);
+                    }
+                }
+                for(x=[-80,80]){
+                    for(y=[-80,80]){
+                        translate([x,y,0]) cylinder(r=130/2,h=100,$fn=6,center=true);
+                    }
+                }
+            }
+           
+        }
+        for (y=ZAxisLinearRodOffsetsFromFront){
+            translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) {
+                cylinder(r=16/2,h=1000);
+                for (a=[0:360/4:360]){
+                     rotate([0,0,a+45]) translate([0,12,0]) cylinder(r=2.9/2,h=1000); 
+                }
+            }
+            translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) {
+                cylinder(r=16/2,h=1000);
+               
+                for (a=[0:360/4:360]){
+                     rotate([0,0,a+45]) translate([0,12,0]) cylinder(r=2.9/2,h=1000); 
+                }
+            }
+        }
+        translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]){
+            cylinder(r=12/2,h=1000);
+            for (a=[0:360/4:360]){
+                     rotate([0,0,a+45]) translate([0,16,0]) cylinder(r=2.9/2,h=1000); 
+            }
+        }
+        translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]){
+            cylinder(r=12/2,h=1000);
+            for (a=[0:360/4:360]){
+                     rotate([0,0,a+45]) translate([0,16,0]) cylinder(r=2.9/2,h=1000); 
+            }
+        }
+    }
+}
+
+module skr1_4_holes(){
+     for(x=[-101.85/2,101.85/2]){
+            for(z=[-76.3/2,76.3/2]){
+                translate([x,0,z]) rotate([90,0,0]) cylinder(r=4/3,h=100,center=true);
+            }
+     }
+}
+
+module skr1_4(){
+    difference(){
+        cube([109.67,1,84.3],center=true);
+        skr1_4_holes();
+    }
+}
+
+module power_supply_holes(){
+     for(x=[-150/2,150/2]){
+            for(z=[-50/2,50/2]){
+                translate([x,0,z]) rotate([90,0,0]) cylinder(r=4.5/3,h=100,center=true);
+            }
+     }
+}
+
+module fan_80mm_holes(){
+     s=71.5;
+     for(x=[-s/2,s/2]){
+            for(z=[-s/2,s/2]){
+                translate([x,0,z]) rotate([90,0,0]) cylinder(r=4.5/3,h=100,center=true);
+            }
+     }
+}
+
+module fan_80mm(){
+     difference(){
+        cube([80,25,80],center=true);
+        rotate([90,0,0]) cylinder(r=76.3/2,h=100,center=true);
+        fan_80mm_holes();
+    }
+}
+
+module power_supply(){
+    //https://www.amazon.com/gp/product/B07VRK86SP/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1
+    difference(){
+        cube([215,30,115],center=true);
+        power_supply_holes();
+    }
+}
+
+module pi_4_holes(){
+     for(x=[-58/2,58/2]){
+            for(z=[-49/2,49/2]){
+                translate([x-58/2-(85/2)+3.5+58,0,z]) rotate([90,0,0]) cylinder(r=4/3,h=100,center=true);
+            }
+     }
+}
+
+module pi_4(){
+     difference(){
+        cube([85,1,56],center=true);
+        pi_4_holes();
+    }
+}
+module enclosure(){
+     // Enclosure
+    translate([0,-ExteriorDepth/2+EnclosureDepth/2-15,20+7+EnclosureHeight/2]) {
+        difference(){
+            cube([EnclosureWidth,EnclosureDepth,EnclosureHeight],center=true);
+            translate([0,-5,-5]) cube([EnclosureWidth-10,EnclosureDepth,EnclosureHeight],center=true);
+        }
+        
+    }
+    // Electronics 
+   // skr1_4();
+    //power_supply();
+    //fan_80mm();
+    //translate([0,0,90]) pi_4();
+}
+
+module bottom_plate(){
+    //FIXME needs to be verified with pulleys
+    // Needs slightly larger cutouts for the corners
+    // Should have rail mount support instead of lead screws
+    // Needs to be verified
+   
+     // Bottom Plate
+    difference(){
+        translate([0,0,23.5]) cube([ExteriorWidth+20,ExteriorDepth+20,7],center=true);
+        
+        for(x=[-ExteriorWidth/2,ExteriorWidth/2]){
+            for(y=[-ExteriorDepth/2,ExteriorDepth/2]){
+                  translate([x,y,Height/2]) cube([21,21,Height],center=true); 
+            }
+        }
+        // From front
+        // 16D @ 117 from front / 58mm from side
+        // 12D @ 215.5 from front / 
+        // 16D @ 317 from front / 
+        for (y=ZAxisLinearRodOffsetsFromFront){
+            translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) {
+                cylinder(r=12/2,h=100);
+                for(y=[-43/2,43/2]){
+                    translate([0,y,0]) cylinder(r=5.5/2,h=100);
+                }
+            }
+            translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-y,0]) {
+                cylinder(r=12/2,h=100);
+                for (y=[-43/2,43/2]){
+                     translate([0,y,0]) cylinder(r=5.5/2,h=100); 
+                }
+            }
+        }
+        translate([ExteriorWidth/2+10-ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]){
+            cylinder(r=12/2,h=100);
+            for (y=[-48/2,48/2]){
+                     translate([0,y,0]) cylinder(r=5.5/2,h=100); 
+            }
+        }
+        translate([-ExteriorWidth/2-10+ZAxisSideOffset,(ExteriorDepth/2+10)-ZAxisMotorOffset,0]){
+            cylinder(r=12/2,h=100);
+            for (y=[-48/2,48/2]){
+                     translate([0,y,0]) cylinder(r=5.5/2,h=100); 
+            }
+        }
+        
+        z_axis_pulley_d=27.5;
+        // FIXME find the pulley offset for the larger pulleys
+        for(y=[0:1:15]){
+            translate([0,(ExteriorDepth/2+10)-ZAxisMotorOffset+y+z_axis_pulley_d/2+10,0]) {
+            cylinder(r=22.5/2,h=100);
+                for (sx=[-31/2,31/2]){
+                    for (sy=[-31/2,31/2]){
+                        translate([sx,sy,0]) cylinder(r=3.5/2,h=100);
+                    }
+                }
+               
+            }
+            
+        }
+        translate([0,(ExteriorDepth/2+10)-ZAxisMotorOffset+z_axis_pulley_d/2+10/2,0]) {
+            for(sx=[-60/2,60/2]){
+                translate([sx,0,0]) cylinder(r=4.8/2,h=100);
+            }
+        }
+        
+        for(y=[-200:100:200]){
+            translate([ExteriorWidth/2,y,0]) cylinder(r=5.5/2,h=100);
+            translate([-ExteriorWidth/2,y,0]) cylinder(r=5.5/2,h=100);
+        }
+        
+        for(x=[-200:100:200]){
+            translate([x,ExteriorDepth/2,0]) cylinder(r=5.5/2,h=100);
+            translate([x,-ExteriorDepth/2,0]) cylinder(r=5.5/2,h=100);
+        }
+        
+        // Enclosure holes
+        a1=5.5*25.4;
+        translate([ExteriorWidth/2-a1+10,-ExteriorDepth/2+75-10,0]) cylinder(r=4/2,h=1000);
+        translate([-ExteriorWidth/2+a1-10,-ExteriorDepth/2+75-10,0]) cylinder(r=4/2,h=1000);
+       
+
+        a2=1*25.4;
+        translate([ExteriorWidth/2-a2+10,-ExteriorDepth/2+30,0]) cylinder(r=4/2,h=1000);
+        translate([-ExteriorWidth/2+a2-10,-ExteriorDepth/2+30,0]) cylinder(r=4/2,h=1000);
+        
+       
+    }
 }
 
 module C2020 (){
@@ -517,6 +801,7 @@ module y_endstop_mount(){
     }
 }
 
+
 // This used to properly drill a carbon fiber 20x20 rail
 module xy_carriage_mount_cf_tube_upper_drill_jig(){
     $fn=30;
@@ -526,14 +811,14 @@ module xy_carriage_mount_cf_tube_upper_drill_jig(){
         
         difference(){
             union(){
-                           //blue_xaxis_pulley_from_motor() translate([0,0,-5]) cylinder(r=6.3/2,h=30,center=true);
+                          
 
           
                    translate([InteriorWidth/2+25,0,XYCarriageHeight+10]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) { 
                        
                         difference(){
-                            cube([50,25,6],center=true);
-                            translate([0,0,-3]) cube([50,20.6,5],center=true);
+                            translate([-100,0,0]) cube([250,25,6],center=true);
+                            translate([-100,0,-3]) cube([250,20.6,5],center=true);
                         }
                     }
                     translate([InteriorWidth/2,0,XYCarriageHeight+10]) mgn12_y_block() translate([-10,0,5/2+Extrusion2020Height+XCarriageMountHeight]) {
@@ -557,6 +842,7 @@ module xy_carriage_mount_cf_tube_upper_drill_jig(){
     }
 }
 
+//xy_carriage_mount_cf_tube_upper_drill_jig();
 
 module xy_carriage_mount_upper_cf_tube(){
     // Y rail
