@@ -48,6 +48,8 @@ you can jump to the bottom of the .scad file and select specific models for prin
 
 ## Parts needed
 
+See the bom.txt in this repo for a build of materials.
+
 ### Belts and Pulleys
 The currently generated stls assume that you're using a Gates 6mm belt and pulleys, such 
 a kit can be acquired from here: https://www.filastruder.com/products/gates-motion-set-for-railcore?_pos=5&_sid=bafef878a&_ss=r
@@ -60,14 +62,20 @@ This particular kit includes 2 smooth idler pulleys, 6 toothed idler pulleys, an
 
  * 20 M5x10MM bolts and t-slot nuts, which should be scavangable from your existing FT5 build
  * 2 M5x75MM bolts for the EVA carriage
- * An assortment of M3 bolts
+ * An assortment of M3 
+ * Shoulder bolts and shims for the pulleys - https://www.amazon.com/gp/product/B077GXK4P5/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1  https://www.filastruder.com/products/shims-for-shoulder-screws?_pos=1&_sid=fd8270e49&_ss=r
 
  ## What to print
 
   - You will need to print all the models in "stls/" folder, print these models with atleast 3 layer thickness, top bottom and side, and 40% infill.
   - You will need to choose and print an EVA extruder carriage, make sure to print the rear carriage tensors which allow for the teeth of the belts to face the rear of the printer
+  - For the x axis you can either use your exisiting aluminum extrusion or go down the path of the carbon fiber square tube. I've included parts for the extrusion which are marked have the suffix *_al_2020.stl or *_cf_tube.stl which are for the carbon fiber square tube. See the section below on the carbon fiber square tube
 
 ## Assembly 
+
+### Carbon Fiber Square Tube (optional)
+
+Print out 2 copies of the xy_carriage_mount_cf_tube_upper_drill_jig.stl and use these two parts to align the holes to drill on the carbon fiber tube, the drill jig is setup so that it aligns the holes for the linear rail and then mounting brackets. I have not tested this drill jig, so you should use it with caution. You essentially drill the holes to mount the linear rail and end mounts, drilling through both sides of the square tube, find them smallest 1/4" socket which fits the M3 nuts required to attach the linear rail to the square tube and enlarge the holes on the bottom of the square tube so that you can fight the socket into the holds to tighten the linear rail to the carbon fiber rod. 
  
 ### Assemble the X rail 
 
