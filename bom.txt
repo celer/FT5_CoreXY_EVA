@@ -1,0 +1,150 @@
+﻿Raspberry PI 3b+
+
+
+See this list for what is compatible with klipper
+
+
+https://www.klipper3d.org/FAQ.html#can-i-run-klipper-on-something-other-than-a-raspberry-pi-3
+
+
+From Ali Express (Carbon Fiber Square Tube for X Axis, optional):
+
+
+1 X 20x20x500mm (the 500m is the only length they offer) 
+
+
+https://www.aliexpress.com/item/32946654825.html?spm=a2g0o.order_list.0.0.dd8b1802j7lyNM
+
+
+From BIQU: 
+
+
+BIQU Phaetus Dragon Hotend (Make sure to select High Flow Option) (Optional)
+
+
+https://www.biqu.equipment/products/bigtreetech-dargon-hotend-all-metal-copper-alloy-0-4mm-extruder-head-for-3d-printer?_pos=3&_psq=dragon&_ss=e&_v=1.0&variant=31355387215970
+
+
+
+
+F446 Controller Board (Make sure to select with 8 TMC2209 drivers), this is way overkill but it’s what is currently available. (Optional)
+
+
+https://www.biqu.equipment/collections/control-board/products/bigtreetech-octopus-pro-v1-0-chip-f446?variant=39585170096226
+
+
+From Printed Solid
+
+
+
+
+Drive motor (There are two other alternatives to this the LGX Mini or the Sherpa Mini, I haven’t tested the options well enough to have a solid opinion on which one is the best - this is the one I’m currently testing, I think it’s better than the Sherpa mini, and will test an LGX mini soon):
+
+
+
+
+https://www.printedsolid.com/products/bondtech-lgx-lite-large-gears-extruder?variant=39664965877845
+ 
+or
+
+
+https://www.printedsolid.com/products/ldo-orbiter-v2-dual-drive-direct-extruder
+
+
+
+
+BL Touch (These are used to profile the bed level)
+https://www.printedsolid.com/products/bltouch-automatic-bed-leveling-probe
+
+
+
+
+From Filstruder:
+
+
+Shims for pulleys
+
+
+https://www.filastruder.com/products/shims-for-shoulder-screws?_pos=1&_sid=fd8270e49&_ss=r
+
+
+Gates Belt Kit for RailCore Printer 300 ZL 
+
+
+https://www.filastruder.com/products/gates-motion-set-for-railcore?pr_prod_strat=copurchase&pr_rec_id=17cab746e&pr_rec_pid=1691051851847&pr_ref_pid=1732623532103&pr_seq=uniform&variant=16740797710407
+
+
+2 X Drive motors (42STH48-2504AC) - Optional, these enable higher speed printing, I haven’t fine tuned mine yet, but they should work better than the folgertech stepper motors
+
+
+https://www.filastruder.com/products/ldo-stepper-motors-all-types?_pos=1&_sid=12992cbaa&_ss=r&variant=39580977791047
+
+
+
+
+From Amazon:
+
+
+High performance bowden tube to keep the filament from spooling backwards
+
+
+https://www.amazon.com/dp/B07PS3NH82?psc=1&ref=ppx_yo2ov_dt_b_product_details
+
+
+These take the play out of the Z Axis (Optional)
+
+
+https://www.amazon.com/gp/product/B08TLVL95C/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1
+
+
+
+
+Anti-Vibration Feet, stop the rocking the printer does at high speed
+
+
+https://www.amazon.com/dp/B0711Y6T56?psc=1&ref=ppx_yo2ov_dt_b_product_details
+
+
+2 X Larger Z axis pulleys, these allow you to 2x the X axis resolution, you’ll also need a new belt, but I don’t know what size you’d need to measure after you test fit these: 
+
+
+https://www.amazon.com/gp/product/B07K6BRL4K/ref=ppx_yo_dt_b_asin_title_o04_s00?ie=UTF8&psc=1
+
+
+For the carbon fiber tube (Optional if you want to run carbon fiber x axis)
+
+
+https://www.amazon.com/dp/B073TRJP6K?psc=1&ref=ppx_yo2ov_dt_b_product_details
+
+
+1 set of M3 nuts (Optional if you want to run a carbon fiber x axis)
+https://www.amazon.com/dp/B071NLDW56?psc=1&ref=ppx_yo2ov_dt_b_product_details
+
+
+1 set of M3 washers (Optional if you want to run carbon fiber x axis)
+https://www.amazon.com/dp/B075GVHLQ4?psc=1&ref=ppx_yo2ov_dt_b_product_details
+
+
+You may need these for the hot end
+https://www.amazon.com/dp/B08R9G2VDR?ref=ppx_yo2ov_dt_b_product_details&th=1
+
+
+Shoulder Bolts, these are used on the corner pulleys and x axis
+https://www.amazon.com/gp/product/B077GXK4P5/ref=ppx_yo_dt_b_asin_title_o08_s00?ie=UTF8&psc=1
+
+
+HDMI Touchscreens & cables to hook up to the Raspberry PIs - You can choose any raspberry pi touch screen, the one I linked is the one I have, you’ll need cables as well. 
+https://www.amazon.com/gp/product/B09LLC4H3Q/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1
+
+
+Set of fans 40x40x10 for the hot ends::
+https://www.amazon.com/gp/product/B088BF6H8P/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+
+Misc hardware:
+
+
+8x M5x30 metric bolts & nuts 
+4x M5x75 metric bolts & nuts
+
+
+You’ll probably need extra wires, and some misc metric hardware.
